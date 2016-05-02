@@ -3,7 +3,7 @@ package chess.images;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-public class ImageLoader {
+public class ImageUtil {
 
     /**
      * Method to load image
@@ -12,9 +12,10 @@ public class ImageLoader {
      */
     public static BufferedImage loadImage(String path) {
         try {
-            return ImageIO.read(ImageLoader.class.getResourceAsStream(path));
+            return ImageIO.read(ImageUtil.class.getResourceAsStream(path));
         } catch(Exception e) {
             System.out.println("Error loading image at path: " + path);
+            e.printStackTrace();
             return null;
         }
     }

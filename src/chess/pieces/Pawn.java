@@ -1,5 +1,8 @@
 package chess.pieces;
 
+import chess.game.Board;
+import chess.images.Images;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -13,6 +16,7 @@ public class Pawn extends Piece {
      */
     public Pawn(int x, int y, int color) {
         super(x, y, color, Piece.PAWN);
+        this.pieceSprite = (color == Piece.WHITE) ? Images.WHITE_PAWN : Images.BLACK_PAWN;
     }
 
     /**
@@ -27,7 +31,7 @@ public class Pawn extends Piece {
      * A method to get the possible moves for a Pawn
      * @return an ArrayList of Points representing the pawns possible moves
      */
-    public ArrayList<Point> possibleMoves() {
+    public ArrayList<Point> possibleMoves(Board b) {
         return null;
     }
 }

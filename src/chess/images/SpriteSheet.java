@@ -16,7 +16,7 @@ public class SpriteSheet {
      * @param numCols the number of columns in the sheet
      */
     public SpriteSheet(String path, int numRows, int numCols) {
-        spriteSheet = ImageLoader.loadImage(path);
+        spriteSheet = ImageUtil.loadImage(path);
         this.numCols = numCols;
         this.numRows = numRows;
         this.spriteWidth = spriteSheet.getWidth() / numCols;

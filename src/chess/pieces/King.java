@@ -1,5 +1,8 @@
 package chess.pieces;
 
+import chess.game.Board;
+import chess.images.Images;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -13,6 +16,7 @@ public class King extends Piece {
      */
     public King(int x, int y, int color) {
         super(x, y, color, Piece.KING);
+        this.pieceSprite = (color == Piece.WHITE) ? Images.WHITE_KING : Images.BLACK_KING;
     }
 
     /**
@@ -27,7 +31,7 @@ public class King extends Piece {
      * A method to get the possible moves for the King
      * @return an ArrayList of Points representing the King's possible moves
      */
-    public ArrayList<Point> possibleMoves() {
+    public ArrayList<Point> possibleMoves(Board b) {
         return null;
     }
 

@@ -1,5 +1,8 @@
 package chess.pieces;
 
+import chess.game.Board;
+import chess.images.Images;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -13,6 +16,7 @@ public class Bishop extends Piece {
      */
     public Bishop(int x, int y, int color) {
         super(x, y, color, Piece.BISHOP);
+        this.pieceSprite = (color == Piece.WHITE) ? Images.WHITE_BISHOP : Images.BLACK_BISHOP;
     }
 
     /**
@@ -27,7 +31,7 @@ public class Bishop extends Piece {
      * A method to get the possible moves for the Bishop
      * @return an ArrayList of Points representing the Bishop's possible moves
      */
-    public ArrayList<Point> possibleMoves() {
-        return null;
+    public ArrayList<Point> possibleMoves(Board b) {
+      return null;
     }
 }

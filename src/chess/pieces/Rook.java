@@ -1,5 +1,8 @@
 package chess.pieces;
 
+import chess.game.Board;
+import chess.images.Images;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -13,6 +16,7 @@ public class Rook extends Piece{
      */
     public Rook(int x, int y, int color) {
         super(x, y, color, Piece.ROOK);
+        this.pieceSprite = (color == Piece.WHITE) ? Images.WHITE_ROOK : Images.BLACK_ROOK;
     }
 
     /**
@@ -27,7 +31,7 @@ public class Rook extends Piece{
      * A method to get the possible moves for the Rook
      * @return an ArrayList of Points representing the Rook's possible moves
      */
-    public ArrayList<Point> possibleMoves() {
+    public ArrayList<Point> possibleMoves(Board b) {
         return null;
     }
 

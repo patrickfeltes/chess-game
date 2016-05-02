@@ -1,5 +1,8 @@
 package chess.pieces;
 
+import chess.game.Board;
+import chess.images.Sprite;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -21,6 +24,7 @@ public abstract class Piece {
     protected int pieceX, pieceY;
     protected int pieceColor;
     protected int pieceType;
+    protected Sprite pieceSprite;
 
     /**
      * Constructor for a Piece.
@@ -34,6 +38,10 @@ public abstract class Piece {
         pieceY = y;
         pieceType = type;
         pieceColor = color;
+    }
+
+    public void draw(Graphics2D g) {
+        pieceSprite.draw(g, pieceX, pieceY);
     }
 
     /**
@@ -51,7 +59,7 @@ public abstract class Piece {
      * Method to return the possible moves for the Piece, will be defined by sub-classes
      * @return an ArrayList of Points representing possible moves
      */
-    public abstract ArrayList<Point> possibleMoves();
+    public abstract ArrayList<Point> possibleMoves(Board b);
 
     /**
      * Method to get the type of a Piece

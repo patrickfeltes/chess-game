@@ -24,7 +24,7 @@ public class Sprite {
      * @param path location of the file
      */
     public Sprite(String path) {
-        image = ImageLoader.loadImage(path);
+        image = ImageUtil.loadImage(path);
         width = image.getWidth();
         height = image.getHeight();
     }
