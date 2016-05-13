@@ -1,13 +1,23 @@
 package chess.game;
 
-import chess.images.Images;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public class Chess extends JPanel implements Runnable {
+import chess.gamestates.GameStateManager;
 
-    // dimensions
+public class Chess extends JPanel implements Runnable, MouseListener, MouseMotionListener {
+	private static final long serialVersionUID = 1L;
+	
+	// dimensions
     public static int WIDTH = 600;
     public static int HEIGHT = 600;
 
@@ -17,20 +27,23 @@ public class Chess extends JPanel implements Runnable {
     private long targetTime = 1000 / FPS;
     private boolean isRunning = false;
 
+    // mouse position
+    public static int mouseX, mouseY;
+    
     // graphics
     private Graphics2D g2d;
-
-    // Board
-    private Board board;
+    
+    // GameStateManager
+    private GameStateManager gsm;
 
     /**
      * Chess constructor, starts the game when created and creates JPanel
      */
     public Chess() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
-
-        board = new Board(0, 0, 560);
-
+        setFocusable(true);
+        addMouseListener(this);
+        addMouseMotionListener(this);
         start();
     }
 
@@ -38,6 +51,7 @@ public class Chess extends JPanel implements Runnable {
      * Method to start the game thread
      */
     private synchronized void start() {
+    	gsm = new GameStateManager();
         isRunning = true;
         thread = new Thread(this, "Game Thread");
         thread.start();
@@ -82,7 +96,7 @@ public class Chess extends JPanel implements Runnable {
      * Method to update all game logic
      */
     public void update() {
-        board.update();
+        gsm.update();
     }
 
     /**
@@ -94,12 +108,35 @@ public class Chess extends JPanel implements Runnable {
         // antialiasing to make stuff look good
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        board.draw(g2d);
+        gsm.draw(g2d);
 
         g2d.dispose();
     }
+	
+	public void mouseDragged(MouseEvent e) {	
+		setMousePosition(e);
+	}
+	
+	public void mouseMoved(MouseEvent e) {	
+		setMousePosition(e);
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		gsm.mouseClicked(e);
+	}
+	
+	private void setMousePosition(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+	}
 
-    public static void main(String[] args) {
+	// unused mouse methods
+	public void mousePressed(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	
+	public static void main(String[] args) {
         JFrame frame = new JFrame("Chess");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
