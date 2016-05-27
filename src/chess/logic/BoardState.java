@@ -3,9 +3,14 @@ package chess.logic;
 import chess.pieces.Piece;
 
 public class BoardState {
-	
-	public BoardState(Piece[] pieces) {
-		
+
+	/*
+	 * Board State class notes, should store the state of the board
+	 * 12 Bitboards representing the pieces of the board: black and white of each type
+	 * Should have a class that takes a
+     */
+	public BoardState() {
+
 	}
 	
 }
