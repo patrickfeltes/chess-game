@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import chess.gamestates.GameStateManager;
+import chess.images.Images;
 
 public class Chess extends JPanel implements Runnable, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -23,7 +24,7 @@ public class Chess extends JPanel implements Runnable, MouseListener, MouseMotio
 
     // game loop fields
     private Thread thread;
-    private int FPS = 30;
+    private int FPS = 60;
     private long targetTime = 1000 / FPS;
     private boolean isRunning = false;
 
@@ -40,6 +41,10 @@ public class Chess extends JPanel implements Runnable, MouseListener, MouseMotio
      * Chess constructor, starts the game when created and creates JPanel
      */
     public Chess() {
+        // load images
+        System.out.println("Images loading");
+        Images images = new Images();
+        System.out.println("Images loaded");
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setFocusable(true);
         addMouseListener(this);
@@ -105,7 +110,6 @@ public class Chess extends JPanel implements Runnable, MouseListener, MouseMotio
      */
     public void paintComponent(Graphics g) {
         g2d = (Graphics2D) g;
-        // antialiasing to make stuff look good
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         gsm.draw(g2d);

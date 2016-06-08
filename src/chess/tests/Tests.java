@@ -36,6 +36,16 @@ public class Tests {
     public static void testMoveGenerator() {
         System.out.println("Testing MoveGenerator...\n");
 
+        System.out.println("Testing pawn attack...\n");
+        long knights = 0L;
+        knights = BitboardUtil.setBit(knights, 4, 4, true);
+        BitboardUtil.print(MoveGenerator.generateKnightMoves(knights, 0));
+
+        System.out.println("Pawn attack passed!\n");
+
+        long board = BitboardUtil.setBit(0, 1, 1, true);
+        BitboardUtil.print(BitboardUtil.flipVertical(BitboardUtil.PAWN_START));
+
         System.out.println("Move Generator passed!\n");
     }
 

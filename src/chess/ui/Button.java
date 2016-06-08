@@ -49,7 +49,7 @@ public class Button {
         } else {
             g.setColor(regColor);
         }
-        RoundRectangle2D rect = new RoundRectangle2D.Double(x, y, width, height, 20, 20);
+        RoundRectangle2D rect = new RoundRectangle2D.Double(x, y, width, height, 10, 10);
         g.draw(rect);
 
         g.setColor(textColor);

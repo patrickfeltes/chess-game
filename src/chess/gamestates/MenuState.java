@@ -46,7 +46,7 @@ public class MenuState extends GameState {
 		if(buttons[ONE_PLAYER_BUTTON].isMouseInside()) {
 			// start one player
 		} else if(buttons[TWO_PLAYER_BUTTON].isMouseInside()) {
-			// start two player
+			this.gsm.addState(new TwoPlayerState(this.gsm));
 		} else if(buttons[QUIT_BUTTON].isMouseInside()) {
 			System.exit(0);
 		}

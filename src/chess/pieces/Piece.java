@@ -1,6 +1,5 @@
 package chess.pieces;
 
-import chess.game.Board;
 import chess.images.Sprite;
 
 import java.awt.*;
@@ -54,12 +53,6 @@ public abstract class Piece {
         pieceColor = p.pieceColor;
         pieceType = p.pieceType;
     }
-
-    /**
-     * Method to return the possible moves for the Piece, will be defined by sub-classes
-     * @return an ArrayList of Points representing possible moves
-     */
-    public abstract ArrayList<Point> possibleMoves(Board b);
 
     /**
      * Method to get the type of a Piece
