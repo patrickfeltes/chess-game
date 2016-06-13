@@ -174,22 +174,26 @@ public class BoardState {
 	}
 
 	// TODO: test this method and check
+	// TODO: make this work
 	public boolean isInCheckMate(int color) {
-		long kings = (color == WHITE) ? whitePieces[KINGS] : blackPieces[KINGS];
-		ArrayList<Location> kingLocation = BitboardUtil.getBitboardAsList(kings);
-		long whites = getWhiteOccupied();
-		long blacks = getBlackOccupied();
-		kings |= getPieceMoves(KINGS, color,  kingLocation.get(0).getRow(), kingLocation.get(0).getCol(), blacks, whites);
+		long pieces = (color == WHITE) ? getWhiteOccupied() : getBlackOccupied();
 
-		long enemyMoves = 0L;
+		ArrayList<Location> locations = BitboardUtil.getBitboardAsList(pieces);
 
-
-		for(int r = 1; r <= 8; r++) {
-			for(int c = 1; c <= 8; c++) {
-				enemyMoves |= getPieceMoves(getPieceType(-color, r, c), -color, r, c, blacks, whites);
+		for(Location loc: locations) {
+			long moves = getMoves(loc.getRow(), loc.getCol());
+			ArrayList<Location> movesList = BitboardUtil.getBitboardAsList(moves);
+			for(Location move: movesList) {
+				makeMove(color, loc.getRow(), loc.getCol(), move.getRow(), move.getCol());
+				if(!isInCheck(color)) {
+					undoLastMove();
+					return false;
+				}
+				undoLastMove();
 			}
 		}
-		return ((kings & enemyMoves) == kings);
+
+		return true;
 	}
 
 	/**
