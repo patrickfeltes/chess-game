@@ -44,7 +44,7 @@ public class MenuState extends GameState {
 	
 	public void mouseClicked(MouseEvent e) {
 		if(buttons[ONE_PLAYER_BUTTON].isMouseInside()) {
-			// start one player
+			this.gsm.addState(new OnePlayerState(this.gsm));
 		} else if(buttons[TWO_PLAYER_BUTTON].isMouseInside()) {
 			this.gsm.addState(new TwoPlayerState(this.gsm));
 		} else if(buttons[QUIT_BUTTON].isMouseInside()) {

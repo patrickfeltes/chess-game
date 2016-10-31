@@ -127,6 +127,10 @@ public class BitboardUtil {
         return locations;
     }
 
+    public static int numberOfOnBits(long board) {
+        return Long.bitCount(board);
+    }
+
     /**
      * Prints the board
      * @param board the board to be printed

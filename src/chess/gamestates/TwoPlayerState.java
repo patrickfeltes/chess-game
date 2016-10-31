@@ -126,7 +126,7 @@ public class TwoPlayerState extends GameState {
 	 * @param g Graphics object used to draw
 	 */
 	public void drawPossibleMoves(Graphics2D g) {
-		g.setColor(new Color(0.2f, 0.2f, 0.7f, 0.3f));
+		g.setColor(new Color(0.2f, 0.2f, 0.7f, 0.5f));
 		for(int r = 1; r <= 8; r++) {
 			for(int c = 1; c <= 8; c++) {
 				if(BitboardUtil.isOn(possibleMoves, r, c)) {

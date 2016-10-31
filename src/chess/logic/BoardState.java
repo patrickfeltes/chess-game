@@ -3,6 +3,7 @@ package chess.logic;
 import chess.logic.BitboardUtil;
 import chess.logic.Move;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -19,8 +20,8 @@ public class BoardState {
 	public static final int QUEENS = 4;
 	public static final int KINGS = 5;
 
-	public static final int BLACK = -1;
 	public static final int WHITE = 1;
+	public static final int BLACK = -1;
 
 	// stack of moves to store previous moves
 	private Stack<Move> pastMoves;
@@ -50,16 +51,6 @@ public class BoardState {
 	}
 
 	/**
-	 * Returns the piece set of a specific color, for example: white = true, index = 1: return white knights
-	 * @param color tells what the color is
-	 * @param index index in the array
-	 * @return the bitboard representing the pieces
-	 */
-	public long getPieceSet(int color, int index) {
-		return (color == WHITE) ? whitePieces[index] : blackPieces[index];
-	}
-
-	/**
 	 * Gets the moves for a piece at a specific location
 	 * @param r the row of the piece
 	 * @param c the col of the piece
@@ -69,7 +60,7 @@ public class BoardState {
 		int color = getPieceColor(r, c);
 		int pieceType = getPieceType(color, r, c);
 
-		long moves = getPieceMoves(pieceType, color, r, c, getBlackOccupied(), getWhiteOccupied());
+		long moves = getPieceMoves(pieceType, color, r, c, getOccupied(BLACK), getOccupied(WHITE));
 
 		// filter out moves that cause checkmate
 		ArrayList<Location> moveLocations = BitboardUtil.getBitboardAsList(moves);
@@ -126,6 +117,21 @@ public class BoardState {
 	}
 
 	/**
+	 * Adds a piece of a specific color/type to the board
+	 * @param pieceType type of the piece
+	 * @param color color of the piece
+	 * @param row row to be added at
+     * @param col col to be added at
+     */
+	public void addPiece(int pieceType, int color, int row, int col) {
+		if(color == WHITE) {
+			whitePieces[pieceType] = BitboardUtil.setBit(whitePieces[pieceType], row, col, true);
+		} else {
+			blackPieces[pieceType] = BitboardUtil.setBit(blackPieces[pieceType], row, col, true);
+		}
+	}
+
+	/**
 	 * Method to remove a piece of specific color from the board
 	 * @param color specifies the color
 	 * @param row row to remove
@@ -143,13 +149,83 @@ public class BoardState {
 		}
 	}
 
-	public void addPiece(int pieceType, int color, int row, int col) {
-		if(color == WHITE) {
-			whitePieces[pieceType] = BitboardUtil.setBit(whitePieces[pieceType], row, col, true);
-		} else {
-			blackPieces[pieceType] = BitboardUtil.setBit(blackPieces[pieceType], row, col, true);
+	public int maxi(int depth) {
+		if(depth == 0) return evaluate(1);
+
+		int max = Integer.MIN_VALUE;
+
+		ArrayList<Move> moves = getAllMoves(WHITE);
+
+		for(Move move: moves) {
+			makeMove(WHITE, move.getStartRow(), move.getStartCol(), move.getEndRow(), move.getEndCol());
+			int temp = mini(depth - 1);
+			undoLastMove();
+			if(temp > max) {
+				max = temp;
+			}
 		}
+
+		return max;
 	}
+
+	public int mini(int depth) {
+		if(depth == 0) return -evaluate(1);
+
+		int min = Integer.MAX_VALUE;
+
+		ArrayList<Move> moves = getAllMoves(BLACK);
+
+		for(Move move: moves) {
+			makeMove(BLACK, move.getStartRow(), move.getStartCol(), move.getEndRow(), move.getEndCol());
+			int temp = maxi(depth - 1);
+			undoLastMove();
+			if(temp < min) {
+				min = temp;
+			}
+		}
+
+		return min;
+	}
+
+	/**
+	 * This is the root minimax call, it checks all possible current moves for the best outcome
+	 * @return
+     */
+	public Move getAIMove() {
+		ArrayList<Move> moves = getAllMoves(BLACK);
+		System.out.println(moves.size());
+
+		Move minimizingMove = null;
+		int min = Integer.MAX_VALUE;
+
+		for(Move move: moves) {
+			makeMove(BLACK, move.getStartRow(), move.getStartCol(), move.getEndRow(), move.getEndCol());
+			int val = mini(3);
+			System.out.println(move.getColor() + " " + move.getStartRow() + " " + move.getStartCol() + " " + move.getEndRow() + " " + move.getEndCol() + " " + val);
+
+			if(val < min) {
+				min = val;
+				minimizingMove = move;
+			}
+
+			undoLastMove();
+		}
+
+		return minimizingMove;
+	}
+
+	/**
+	 * Evaluates the current board state
+	 * @return a double representing the value of the board with respect to the maximizing player
+     */
+	public int evaluate(int color) {
+		return 200 * color * (getPieceCount(KINGS, WHITE) - getPieceCount(KINGS, BLACK))
+				+ 9 * color * (getPieceCount(QUEENS, WHITE) - getPieceCount(QUEENS, BLACK))
+				+ 3 * color * (getPieceCount(BISHOPS, WHITE) - getPieceCount(BISHOPS, BLACK))
+				+ 3 * color * (getPieceCount(KNIGHTS, WHITE) - getPieceCount(KNIGHTS, BLACK))
+				+ 1 * color * (getPieceCount(PAWNS, WHITE) - getPieceCount(PAWNS, BLACK));
+	}
+
 
 	/**
 	 * Checks if a specific color is in check
@@ -158,8 +234,8 @@ public class BoardState {
      */
 	public boolean isInCheck(int color) {
 		long kings = (color == WHITE) ? whitePieces[KINGS] : blackPieces[KINGS];
-		long whites = getWhiteOccupied();
-		long blacks = getBlackOccupied();
+		long whites = getOccupied(WHITE);
+		long blacks = getOccupied(BLACK);
 
 		long enemyMoves = 0L;
 
@@ -173,10 +249,9 @@ public class BoardState {
 		return (enemyMoves & kings) != 0L;
 	}
 
-	// TODO: test this method and check
-	// TODO: make this work
+
 	public boolean isInCheckMate(int color) {
-		long pieces = (color == WHITE) ? getWhiteOccupied() : getBlackOccupied();
+		long pieces = getOccupied(color);
 
 		ArrayList<Location> locations = BitboardUtil.getBitboardAsList(pieces);
 
@@ -289,17 +364,57 @@ public class BoardState {
 	 * @return true if the bitboard contains a piece of that color at the (r, c), false if otherwise
 	 */
 	public boolean isOccupied(int color, int r, int c) {
-		for (int i = 0; i < 6; i++) {
-			if ((color == WHITE)) {
-				if (BitboardUtil.isOn(whitePieces[i], r, c)) return true;
-			} else {
-				if (BitboardUtil.isOn(blackPieces[i], r, c)) return true;
-			}
-		}
-		return false;
+		long occupied = getOccupied(color);
+		return BitboardUtil.isOn(occupied, r, c);
 	}
 
-	public long getBlackOccupied() {
+	public ArrayList<Move> getAllMoves(int color) {
+		ArrayList<Move> moves = new ArrayList<Move>();
+		for(int r = 1; r <= 8; r++) {
+			for(int c =1; c <= 8; c++) {
+				if(getPieceColor(r, c) == color) {
+					int type = getPieceType(color, r, c);
+					ArrayList<Location> moveLocations = BitboardUtil.getBitboardAsList(getMoves(r, c));
+					for(Location loc: moveLocations) {
+						moves.add(new Move(color, type, r, c, loc.getRow(), loc.getCol()));
+					}
+				}
+			}
+		}
+		return moves;
+	}
+
+	public int getNumberOfMoves(int color) {
+		int count = 0;
+		for(int r = 1; r <= 8; r++) {
+			for(int c = 1; c <= 8; c++) {
+				if(getPieceColor(r, c) == color) {
+					long moves = getMoves(r, c);
+					count += BitboardUtil.numberOfOnBits(moves);
+				}
+			}
+		}
+		return count;
+	}
+
+	public int getPieceCount(int pieceType, int pieceColor) {
+		if(pieceColor == WHITE) {
+			return Long.bitCount(whitePieces[pieceType]);
+		} else {
+			return Long.bitCount(blackPieces[pieceType]);
+		}
+	}
+
+	public long getOccupied(int color) {
+		long res = 0L;
+
+		for(int i = 0; i < 6; i++) {
+			res |= (color == WHITE) ? whitePieces[i] : blackPieces[i];
+		}
+		return res;
+	}
+
+	/*public long getBlackOccupied() {
 		long res = 0L;
 		for(int i = 0; i < 6; i++) {
 			res |= blackPieces[i];
@@ -313,6 +428,6 @@ public class BoardState {
 			res |= whitePieces[i];
 		}
 		return res;
-	}
+	}*/
 
 }
